@@ -1,8 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 function InvoicePage() {
   const [items, setItems] = useState([]);
   const [discount, setDiscount] = useState(0);
   const [tax, setTax] = useState(0);
+  const [currency, setCurrency] = useState("BDT");
+  const [rate, setRate] = useState(0);
+  const [error, setError] = useState(false);
+
+  useEffect(function () {
+    fetch("https://api.frankfurter.dev/v2/rates?base=usd")
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.length === 0) {
+          setError(true);
+        } else {
+          setRate(data);
+        }
+      })
+      .catch(function () {
+        setError(true);
+      });
+  }, []);
 
   function addItem() {
     const newItem = {
@@ -98,6 +118,30 @@ function InvoicePage() {
     const tax = calculateTax();
     const total = afterDiscount + tax;
     return total;
+  }
+
+  function getrate() {
+    let foundrate = 0;
+    for (let i = 0; i < rate.length; i = i + 1) {
+      if (rate[i].quote === currency) {
+        foundrate = rate[i].rate;
+      }
+    }
+    return foundrate;
+  }
+
+  function convertTotal() {
+    const total = calculateTotal();
+    const rate = getrate();
+    const converted = total * rate;
+    return converted;
+  }
+
+  function isRatesLoaded() {
+    if (rate.length > 0) {
+      return true;
+    }
+    return false;
   }
 
   return (
@@ -214,8 +258,52 @@ function InvoicePage() {
 
         <div className="flex justify-between bg-gray-800 text-white p-3 rounded mt-2">
           <span className="font-bold">Total</span>
-          <span className="font-bold">{calculateTotal().toFixed(2)}</span>
+          <span className="font-bold">{calculateTotal().toFixed(2)} USD</span>
         </div>
+      </div>
+
+      <div className="bg-white border border-gray-300 p-4 mt-4 w-80 rounded">
+        <div className="flex justify-between mb-2 items-center">
+          <span>Currency</span>
+          <select
+            value={currency}
+            onChange={function (e) {
+              setCurrency(e.target.value);
+            }}
+            className="border border-gray-300 p-1 rounded"
+          >
+            <option value="BDT">BDT</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="INR">INR</option>
+            <option value="JPY">JPY</option>
+            <option value="AUD">AUD</option>
+          </select>
+        </div>
+
+        {error === true && (
+          <p className="text-red-500">
+            Error loading rates. Please try again later.
+          </p>
+        )}
+
+        {error === false && isRatesLoaded() === false && (
+          <p className="text-gray-700">Loading rates...</p>
+        )}
+
+        {error === false && isRatesLoaded() === true && (
+          <div>
+            <div className="flex justify-between mb-2 text-gray-700 font-bold">
+              <span>Equivalent:</span>
+              <span className="font-bold">
+                {convertTotal().toFixed(2)} {currency}
+              </span>
+            </div>
+            <p className="text-gray-500 text-sm mt-2">
+              1 USD = {getrate().toFixed(2)} {currency}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
