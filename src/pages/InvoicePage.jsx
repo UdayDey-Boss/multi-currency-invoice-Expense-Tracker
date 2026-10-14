@@ -147,10 +147,20 @@ function InvoicePage() {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Invoice</h1>
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={function () {
+            window.print();
+          }}
+          className="bg-gray-800 text-white px-4 py-2 rounded no-print"
+        >
+          Print Invoice
+        </button>
+      </div>
 
       <button
         onClick={addItem}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+        className="bg-blue-500 text-white px-4 py-2 rounded mb-4 no-print"
       >
         Add Item
       </button>
@@ -162,7 +172,7 @@ function InvoicePage() {
               <th className="text-left p-3">Quantity</th>
               <th className="text-left p-3">Rate</th>
               <th className="text-right p-3">Amount</th>
-              <th className="p-3">Actions</th>
+              <th className="p-3 no-print">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -204,7 +214,7 @@ function InvoicePage() {
                     {(item.quantity * item.rate).toFixed(2)}
                   </td>
 
-                  <td className="p-3">
+                  <td className="p-3 no-print">
                     <button
                       onClick={function () {
                         removeItem(item.id);
@@ -262,7 +272,7 @@ function InvoicePage() {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-300 p-4 mt-4 w-80 rounded">
+      <div className="bg-white border border-gray-300 p-4 mt-4 w-80 rounded no-print">
         <div className="flex justify-between mb-2 items-center">
           <span>Currency</span>
           <select
