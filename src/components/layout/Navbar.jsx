@@ -19,9 +19,6 @@ function Navbar() {
           <NavLink to="/expenses" className={linkClass}>
             Expenses
           </NavLink>
-          <NavLink to="/dashboard" className={linkClass}>
-            Dashboard
-          </NavLink>
         </div>
       </div>
     </nav>
