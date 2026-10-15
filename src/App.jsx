@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import InvoicePage from "./pages/InvoicePage";
 import ExpensesPage from "./pages/ExpensesPage";
-import DashboardPage from "./pages/DashboardPage";
 
 function App() {
   return (
@@ -13,7 +12,6 @@ function App() {
           <Routes>
             <Route path="/" element={<InvoicePage />} />
             <Route path="/expenses" element={<ExpensesPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
           </Routes>
         </main>
       </div>
